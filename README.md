@@ -1,6 +1,6 @@
 ### Description:
 
-* Scrapy-Redis Project
+* Scrapy-Redis Project for www.mmjpg.com
 
 ### Installation:
 
