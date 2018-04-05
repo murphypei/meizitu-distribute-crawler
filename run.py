@@ -1,8 +1,21 @@
 # -*- coding: utf-8 -*-
 
-__author__ = 'peic'
-
 from scrapy.cmdline import execute
+import logging
+from meizitu_crawler.settings import LOG_FILE
 
 if __name__ == "__main__":
-    execute(['scrapy', 'crawl', 'mmjpg'])
+
+    formatter = logging.Formatter(
+        '%(asctime)s [%(filename)s: %(lineno)d] %(levelname)s %(message)s')
+    fh = logging.FileHandler(LOG_FILE, mode='w', encoding='utf-8')
+    fh.setFormatter(formatter)
+    ch = logging.StreamHandler()
+    ch.setFormatter(formatter)
+    logger = logging.getLogger()
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+
+    # 执行爬虫命令
+    execute(['scrapy', 'crawl', 'beauty_spider'])
+    # execute(['scrapy', 'crawl', 'beauty_crawler_spider'])

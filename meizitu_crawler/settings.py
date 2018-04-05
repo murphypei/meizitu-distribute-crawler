@@ -1,30 +1,37 @@
 # -*- coding: utf-8 -*-
 
-# Scrapy settings for DistributedSpider project
+# Scrapy settings for meizitu_crawler project
 #
-# For simplicity, this file contains only settings considered important or
-# commonly used. You can find more settings consulting the documentation:
-#
-#     http://doc.scrapy.org/en/latest/topics/settings.html
-#     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
-#     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'DistributedSpider'
 
-SPIDER_MODULES = ['DistributedSpider.spiders']
-NEWSPIDER_MODULE = 'DistributedSpider.spiders'
+import os
+import time
 
+# 获取当前目录
+PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
+
+BOT_NAME = 'meizitu_crawler'
+
+SPIDER_MODULES = ['meizitu_crawler.spiders']
+NEWSPIDER_MODULE = 'meizitu_crawler.spiders'
+
+# 使用scrapy-redis调度请求队列
 SCHEDULER = "scrapy_redis.scheduler.Scheduler"
-SCHEDULER_PERSIST = True
+
+# Redis保存队列，不清除记录，能够回复和暂停爬虫
+# SCHEDULER_PERSIST = True
+
+# 确保所有的URL经过Redis去重
 DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'DistributedSpider (+http://www.yourdomain.com)'
+#USER_AGENT = 'meizitu_crawler (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
-DEFAULT_ITEM_CLASS = 'DistributedSpider.items.DistributedspiderItem'
+# 设置默认的Item
+DEFAULT_ITEM_CLASS = 'meizitu_crawler.items.ImagesItem'
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -38,7 +45,7 @@ DEFAULT_ITEM_CLASS = 'DistributedSpider.items.DistributedspiderItem'
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
 
-# Disable cookies (enabled by default)
+# 设置cookie登录
 COOKIES_ENABLED = True
 COOKIES_DEBUG = True
 
@@ -46,21 +53,31 @@ COOKIES_DEBUG = True
 #TELNETCONSOLE_ENABLED = False
 
 # Override the default request headers:
-#DEFAULT_REQUEST_HEADERS = {
-#   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-#   'Accept-Language': 'en',
-#}
+DEFAULT_REQUEST_HEADERS = {
+    'Accept': 'image/webp,*/*;q=0.8',
+    'Accept-language': 'zh-CN,zh;q=0.8',
+    'Referer': 'https://www.mmjpg.com/',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36',
+}
 
 # Enable or disable spider middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'DistributedSpider.middlewares.DistributedspiderSpiderMiddleware': 543,
+#    'meizitu_crawler.middlewares.meizitu_crawlerSpiderMiddleware': 543,
 #}
 
+
+
+# 默认开启站点隔离（也就是只爬取allow_domains的站点）
+# SPIDER_MIDDLEWARES = {
+#         'scrapy.contrib.spidermiddleware.offsite.OffsiteMiddleware': 500
+# }
+
 # Enable or disable downloader middlewares
-# See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-   'DistributedSpider.middlewares.MyUserAgentMiddleware': 400,
+    # 'meizitu_crawler.middlewares.cookie.CookieMiddleware': 500,
+    # 'meizitu_crawler.middlewares.proxy.ProxyMiddleware': 543,
+    'meizitu_crawler.middlewares.useragents.RotateUserAgentMiddleware': 400
 }
 
 # Enable or disable extensions
@@ -69,12 +86,14 @@ DOWNLOADER_MIDDLEWARES = {
 #    'scrapy.extensions.telnet.TelnetConsole': None,
 #}
 
-# Configure item pipelines
-# See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
+# 设置item的pipelines
 ITEM_PIPELINES = {
-   'DistributedSpider.pipelines.DistributedspiderPipeline': 300,
-   'scrapy_redis.pipelines.RedisPipeline': 400
+    'meizitu_crawler.pipelines.BeautySpiderPipeline': 300,
+    'scrapy_redis.pipelines.RedisPipeline': 400
 }
+
+# 设置item在redis中的默认存储键
+REDIS_ITEMS_KEY = "meizitu:item"
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
@@ -97,18 +116,19 @@ ITEM_PIPELINES = {
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-
 # 图片保存路径
-IMAGES_STORE_PATH = './images'
+IMAGES_STORE_PATH = os.path.join(PROJECT_DIR, 'images_storage')
 
 # 设置终止条件
-CLOSESPIDER_ITEMCOUNT = 2000
+# CLOSESPIDER_ITEMCOUNT = 2000
 
-# Redis设置
-REDIS_URL = 'redis://:redisredis@219.223.197.178:6379/0'
+# Redis数据库设置
+REDIS_URL = "redis://:redisredis@219.223.193.170:6379"
+URL_DB = 0
+USER_DB = 1
+COOKIE_DB = 2
 
-REDIS_HOST = "219.223.197.178"
-REDIS_PORT = 6379
-REDIS_PASSWD = "redisredis"
-REDIS_DB = 0
-
+# 日志设置
+# current_time = time.strftime('%Y-%m-%d_%H-%M-%S', time.localtime(time.time()))
+# LOG_FILE = os.path.join(PROJECT_DIR, 'crawler_{}.log'.format(current_time))
+LOG_FILE = os.path.join(PROJECT_DIR, 'crawler.log')

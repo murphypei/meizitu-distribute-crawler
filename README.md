@@ -1,20 +1,3 @@
 ### Description:
 
-* Scrapy-Redis Project for www.mmjpg.com
-
-### Installation:
-
-* sudo easy_install virtualenv
-* virtualenv venv
-* source venv/bin/activate
-* for req in $(cat requirements.txt); do pip install $req; done
-
-### Usage:
-
-* python run.py
-
-### Attention:
-
-* set images save path for yourself
-
-
+基于scrapy-redis框架的分布式爬虫（http://www.meizitu.com/）
