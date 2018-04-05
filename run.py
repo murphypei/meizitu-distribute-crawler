@@ -17,5 +17,5 @@ if __name__ == "__main__":
     logger.addHandler(ch)
 
     # 执行爬虫命令
-    execute(['scrapy', 'crawl', 'beauty_spider'])
-    # execute(['scrapy', 'crawl', 'beauty_crawler_spider'])
+    # execute(['scrapy', 'crawl', 'beauty_spider'])
+    execute(['scrapy', 'crawl', 'beauty_crawler_spider'])

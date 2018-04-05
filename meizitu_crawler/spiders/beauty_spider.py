@@ -9,13 +9,13 @@ import logging
 from meizitu_crawler.items import ImagesItem, ImagesItemLoader
 
 
-class BeautyRulerSpider(CrawlSpider):
-    name = "beauty_ruler_spider"
+class BeautySpider(CrawlSpider):
+    name = "beauty_spider"
     allowed_domains = ['www.mmjpg.com']
     start_urls = ["http://www.mmjpg.com"]
 
     rules = (
-        Rule(LinkExtractor(allow=(r'/tag/[\w]*'))),
+        # Rule(LinkExtractor(allow=(r'/tag/[\w]*'))),
         Rule(LinkExtractor(allow=(r'/mm/[\d/]*')), callback='parse_item'),
     )
 
@@ -33,10 +33,8 @@ class BeautyRulerSpider(CrawlSpider):
         loader.add_xpath('tags', u"//*[@class='tags']//a/text()")
         yield loader.load_item()
 
-        # 特殊增加下一页（防止extractor提取失败）
+        # 提取下一页
         next_page = response.xpath(
             u"//*[@id='page']/a[@class='ch next']/@href").extract()
-        if next_page:
-            print("\n\n" + next_page + "\n\n")
-            yield Request(
-                "http://www.mmjpg.com" + next_page, callback=self.parse_item)
+        for url in next_page:
+            yield Request("http://www.mmjpg.com" + url, callback=self.parse_item)

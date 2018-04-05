@@ -44,7 +44,5 @@ class BeautyCrawlerSpider(RedisCrawlSpider):
         # 爬取下一页
         next_page = response.xpath(
             u"//*[@id='page']/a[@class='ch next']/@href").extract()
-        if next_page:
-            logging.info("\n\n" + next_page[0] + "\n\n")
-            yield Request(
-                "http://www.mmjpg.com" + next_page[0], callback=self.parse_item)
+        for url in next_page:
+            yield Request("http://www.mmjpg.com" + url, callback=self.parse_item)
