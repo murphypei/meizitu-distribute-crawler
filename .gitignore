@@ -2,3 +2,4 @@
 .idea
 __pycache__
 meizitu_crawler/crawler.log
+images_storage

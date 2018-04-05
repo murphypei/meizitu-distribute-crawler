@@ -10,8 +10,8 @@ import logging
 from meizitu_crawler.items import ImagesItem, ImagesItemLoader
 
 
-class BeautyCrawlerSpider(RedisCrawlSpider):
-    name = "beauty_crawler_spider"
+class BeautyDistributeSpider(RedisCrawlSpider):
+    name = "beauty_distribute_spider"
     redis_key = "crawler:start_urls"
     allowed_domains = ['www.mmjpg.com']
 
