@@ -123,7 +123,7 @@ IMAGES_STORE_PATH = os.path.join(PROJECT_DIR, 'images_storage')
 # CLOSESPIDER_ITEMCOUNT = 2000
 
 # Redis数据库设置
-REDIS_URL = "redis://:redisredis@219.223.193.170:6379"
+REDIS_URL = "redis://username:password@ip:port"
 URL_DB = 0
 USER_DB = 1
 COOKIE_DB = 2
