@@ -25,7 +25,7 @@ class BeautyDistributeSpider(RedisCrawlSpider):
         # domain = kwargs.pop('domain', '')
         # self.allowed_domains = filter(None, domain.split(','))
 
-        super(BeautyCrawlerSpider, self).__init__(*args, **kwargs)
+        super(BeautyDistributeSpider, self).__init__(*args, **kwargs)
 
     def parse_item(self, response):
         """处理图片页面，提取图片Item
